@@ -6,9 +6,7 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.CipherException;
@@ -28,25 +26,20 @@ public class ConnectBlockchainService {
 	
 	private String accountAddress = "0x3c537e01317d9dd6792be803659d60aee2bfdb24";
 	
-	private void setInfo(String username, String password, String data) throws Exception {
+	public void setInfo(String username, String password, String data) throws Exception {
 		Register_sol_Register contract  = getContract(username,password);
 		byte[] array = new byte[32];
 		array = Arrays.copyOfRange(new String(data).getBytes(), 0, 32);
 		contract.setInfo(array).send();
 	}
 	
-	private byte[] getInfo(String username, String password) throws Exception {
+	public byte[] getInfo(String username, String password) throws Exception {
 		Register_sol_Register contract  = getContract(username,password);
 		return contract.getInfo().send();
 	}
 	
-	public String createWallet(String username) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchProviderException, CipherException, IOException {
-		String password = "ZsdW#2134";
-		String fileName = generateWallet(password, username);
-		return fileName;
-	}
 	
-	public Web3j getBlockchainConnection(String password, String username) throws Exception {
+	public Web3j getBlockchainConnection() throws Exception {
 		if (web3j == null) {
 			web3j = Web3j.build(new HttpService(ip));  // defaults to http://localhost:8545/
 		}
@@ -69,11 +62,12 @@ public class ConnectBlockchainService {
 		}
 	}
 	
-	private Register_sol_Register getContract(String username, String password) throws IOException, CipherException {
+	private Register_sol_Register getContract(String username, String password) throws Exception {
 		Credentials credentials = WalletUtils
-				.loadCredentials(password,walletFolderPath+"\\"+username+"\\");
+				.loadCredentials(password,walletFolderPath+username+"\\"+generateWallet(password, username));
+		@SuppressWarnings("deprecation")
 		Register_sol_Register contract = 
-				Register_sol_Register.load(accountAddress,web3j, credentials, new BigInteger("0"), new BigInteger("1000000"));
+				Register_sol_Register.load(accountAddress,getBlockchainConnection(), credentials, new BigInteger("0"), new BigInteger("1000000"));
 		return contract;
 	}
 

@@ -22,6 +22,7 @@ import com.attrahackathon.repository.KycRepository;
 import com.attrahackathon.request.IdType;
 import com.attrahackathon.request.KycMapping;
 import com.attrahackathon.request.KycRequest;
+import com.connectBlockChain.ConnectBlockchainService;
 
 
 @CrossOrigin("*")
@@ -38,8 +39,17 @@ public class FrontController {
 	@Autowired
 	private KycHexMappingRepository kycHexMappingRepository;
 	
+	@Autowired
+	private ConnectBlockchainService connectBlockchainService;
+	
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
+	/**
+	 * It will be called after USER/REG-BODY/BANK submits KYC requests
+	 * @param kycRequest
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/submiteKyc")
 	public Object executeSubmiteKyc(@RequestBody KycRequest kycRequest) throws Exception {
 		LOGGER.info("Inside Submit KYC");
@@ -58,6 +68,13 @@ public class FrontController {
 		return storedKyc.get();
 	}
 	
+	/**
+	 * 
+	 * @param kycRequest
+	 * @param status
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/verifyKyc/{status}")
 	public String executeVerifyKyc(@RequestBody KycRequest kycRequest, @PathVariable String status) throws Exception {
 		LOGGER.info("Inside VERIFY KYC");
@@ -70,6 +87,9 @@ public class FrontController {
 			kycMapping.setPrimaryIdNumber(kycRequest.getPrimaryIdNumber()); // Need to encrypt it.
 			kycHexMappingRepository.save(kycMapping);
 			kycRepository.deleteById(kycRequest.getPrimaryIdNumber());
+			
+			//call blockchainservice for setting information
+			connectBlockchainService.setInfo(kycRequest.getPrimaryIdNumber(), "abcd@123", multiHash.toString());
 		} else if (status.equalsIgnoreCase("REJECTED")) {	
 			storedKyc.get().setStatus("REJECTED");
 			kycRepository.save(storedKyc.get());
@@ -77,16 +97,27 @@ public class FrontController {
 		return "Operation performed successfully !";
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/getAllUnverified")
 	public List<KycRequest> executeGetAllUnverifiedKyc() throws Exception {
 		LOGGER.info("Inside get All unverified data");
 		return kycRepository.findAll();
 	}
 	
+	/**
+	 * 
+	 * @param hexCode
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("getDataUsingHex/{hexCode}")
 	public KycRequest executeGetDataUsingHex(@PathVariable String hexCode) throws Exception {
 		LOGGER.info("Inside get All unverified data");
 		return ipfsImplimentation.getData(hexCode);
 	}
+	
 }
