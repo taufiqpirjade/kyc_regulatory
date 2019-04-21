@@ -1,5 +1,7 @@
 package com.attrahackathon.request;
 
+import java.math.BigInteger;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,24 +9,28 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class KycMapping {
 	
 	@Id
-	private String primaryIdNumber;
-	
+	private String uniqueHex;
+	private BigInteger blockNumber;
 	private String uniqueHexCode;
-
-	public String getPrimaryIdNumber() {
-		return primaryIdNumber;
+	
+	public String getUniqueHex() {
+		return uniqueHex;
 	}
-
-	public void setPrimaryIdNumber(String primaryIdNumber) {
-		this.primaryIdNumber = primaryIdNumber;
+	public void setUniqueHex(String uniqueHex) {
+		this.uniqueHex = uniqueHex;
 	}
-
+	public BigInteger getBlockNumber() {
+		return blockNumber;
+	}
+	public void setBlockNumber(BigInteger blockNumber) {
+		this.blockNumber = blockNumber;
+	}
 	public String getUniqueHexCode() {
 		return uniqueHexCode;
 	}
-
 	public void setUniqueHexCode(String uniqueHexCode) {
 		this.uniqueHexCode = uniqueHexCode;
 	}
-
+	
+	
 }

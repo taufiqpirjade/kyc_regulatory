@@ -86,6 +86,14 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>multibase</groupId>
+			<artifactId>multibase</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${MULTIBASE}</systemPath>
+		</dependency>
+		
+		<dependency>
 		  <groupId>org.web3j</groupId>
 		  <artifactId>core</artifactId>
 		  <version>4.2.0</version>
@@ -150,5 +158,6 @@
 		<IPFS>${basedir}/lib/ipfs.jar</IPFS>
 		<MULTIADDR>${basedir}/lib/multiaddr.jar</MULTIADDR>
 		<MULTIHASH>${basedir}/lib/multihash.jar</MULTIHASH>
+		<MULTIBASE>${basedir}/lib/multibase.jar</MULTIBASE>
 	</properties>
 </project>
